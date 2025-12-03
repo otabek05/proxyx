@@ -1,5 +1,5 @@
 servers:
-  - domain: server.daeryuk.org
+  - domain: server.example.org
     routes:
       - path: /**
         type: static
