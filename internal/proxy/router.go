@@ -21,7 +21,7 @@ func NewRouter(config *common.ProxyConfig) http.Handler {
 			panic("Domain must be specified ")
 		}
 
-		//rl := NewRateLimiter(server.RateLimit, time.Duration(server.RateWindow)*time.Second)
+
 		var routes []routeInfo
 		for _, route := range server.Routes {
 

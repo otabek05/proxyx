@@ -12,6 +12,7 @@ import (
 
 func handleRequest(w http.ResponseWriter, r *http.Request, servers map[string][]routeInfo) {
 	host, _, _ := net.SplitHostPort(r.Host)
+
 	routes, ok := servers[host]
 	if !ok {
 		ServerDefaultPage(w)
@@ -96,6 +97,7 @@ func handleRequest(w http.ResponseWriter, r *http.Request, servers map[string][]
 
 		http.ServeFile(w, r, indexFile)
 	default:
+		
 		ServerDefaultPage(w)
 	}
 }

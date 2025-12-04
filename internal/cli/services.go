@@ -23,7 +23,6 @@ var servicesCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 
 		deleteFile, _ := cmd.Flags().GetString("delete")
-
 		configDir := "/etc/proxyx/configs"
 		if deleteFile != "" {
 			fullPath := filepath.Join(configDir, deleteFile)
@@ -44,7 +43,6 @@ var servicesCmd = &cobra.Command{
 			fmt.Printf("Deleted config: %s\n", deleteFile)
 			return
 		}
-
 
 		files, err := filepath.Glob(filepath.Join(configDir, "*.yaml"))
 		if err != nil {

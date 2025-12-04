@@ -26,3 +26,8 @@ var stopCmd = &cobra.Command{
 	fmt.Println("ProxyX stopped successfully")
 	},
 }
+
+func stopProxyX() {
+	fmt.Println("🛑 Stopping ProxyX service...")
+	exec.Command("systemctl", "stop", "proxyx").Run()
+}

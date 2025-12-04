@@ -4,5 +4,5 @@ servers:
       - path: /**
         type: static
         dir: /home/otabek/easy365
-        rate_limit: 10
+        rate_limit: 1200
         rate_window: 2

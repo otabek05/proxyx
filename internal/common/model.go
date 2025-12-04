@@ -12,6 +12,8 @@ type RouteConfig struct {
 
 type ServerConfig  struct {
 	Domain  string `yaml:"domain"`
+	CertFile string `yaml:"cert_file,omitempty"`
+	KeyFile string `yaml:"key_file,omitempty"`
 	Routes  []RouteConfig `yaml:"routes"`
 }
 
