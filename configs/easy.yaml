@@ -1,5 +1,7 @@
 servers:
   - domain: localhost
+    cert_file: /home/otabek/localhost-cert/localhost.crt
+    key_file:  /home/otabek/localhost-cert/localhost.key
     routes:
       - path: /**
         type: static
