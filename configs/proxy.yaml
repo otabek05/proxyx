@@ -7,18 +7,4 @@ servers:
         rate_window: 5           
         backends:
           - http://localhost:8080
-
-      - path: /swagger-ui/**
-        type: proxy           
-        backends:
-          - http://localhost:8080
-        
-      - path: /v3/**
-        type: proxy        
-        backends:
-          - http://localhost:8080
-
-      - path: /api/v2/**
-        type: proxy
-        backends:
-          - http://localhost:9002
+          - http://localhost:8081

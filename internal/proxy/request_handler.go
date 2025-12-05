@@ -1,7 +1,6 @@
 package proxy
 
 import (
-	"fmt"
 	"log"
 	"net"
 	"net/http"
@@ -11,8 +10,9 @@ import (
 	"strings"
 )
 
+
+
 func handleRequest(w http.ResponseWriter, r *http.Request, servers map[string][]routeInfo) {
-	fmt.Printf("Host: %s \n", r.RemoteAddr)
 	routes, ok := servers[r.Host]
 	if !ok {
 		ServerDefaultPage(w)
