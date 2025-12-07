@@ -2,31 +2,34 @@ package proxy
 
 import (
 	"ProxyX/internal/common"
+	"ProxyX/internal/healthchecker"
 	"net/url"
 	"sync"
 )
 
 
 type LoadBalancer struct {
-	backends []*url.URL
+	servers []*healthchecker.Server
 	index int
 	mutex sync.Mutex
 }
 
+
+
 func NewLoadBalancer(backendUrls []common.ProxyServer) (*LoadBalancer, error) {
-	var backends []*url.URL
+	var servers []*healthchecker.Server
 
 	for _, addr := range backendUrls {
-		u, err := url.Parse(addr.URL)
+		b, err := healthchecker.RegisterServer(addr.URL)
 		if err != nil {
 			return nil, err 
 		}
 
-		backends = append(backends, u)
+		servers = append(servers, b)
 	}
 
 	return &LoadBalancer{
-		backends: backends,
+		servers: servers,
 	}, nil
 }
 
@@ -35,13 +38,19 @@ func (l *LoadBalancer) Next() *url.URL {
 	l.mutex.Lock()
 	defer l.mutex.Unlock()
 
-	if len(l.backends) == 0 {
+	n := len(l.servers)
+	if n == 0 {
 		return nil
 	}
 
-	target := l.backends[l.index%len(l.backends)]
-	l.index++
-	return target
-}
+	for range n {
+	    srv := l.servers[l.index%n]
+		l.index++
+		if srv.IsHealthy(){
+			return srv.URL
+		}
+	}
 
+	return nil
+}
 

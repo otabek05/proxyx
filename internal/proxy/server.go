@@ -2,10 +2,12 @@ package proxy
 
 import (
 	"ProxyX/internal/common"
+	"ProxyX/internal/healthchecker"
 	"crypto/tls"
 	"fmt"
 	"log"
 	"net/http"
+	"time"
 )
 
 
@@ -25,6 +27,8 @@ func (p *ProxyServer) Start()  {
 	if err := p.loadAllCertificates(); err != nil {
 		log.Fatal(err)
 	}
+
+	healthchecker.Start(3 *time.Second)
 
 	go func ()  {
 	   log.Println("HTTP Proxy server running on :80")
