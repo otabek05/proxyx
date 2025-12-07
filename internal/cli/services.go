@@ -3,10 +3,13 @@ package cli
 import (
 	"ProxyX/internal/common"
 	"fmt"
-	"github.com/olekukonko/tablewriter"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/olekukonko/tablewriter"
+	"github.com/olekukonko/tablewriter/renderer"
+	"github.com/olekukonko/tablewriter/tw"
 
 	"github.com/gookit/color"
 	"github.com/spf13/cobra"
@@ -14,16 +17,17 @@ import (
 )
 
 func init() {
-	servicesCmd.Flags().StringP("output", "o", "", "Outpuy")
-	rootCmd.AddCommand(servicesCmd)
+	configCmd.Flags().StringP("output", "o", "", "Output format")
+	rootCmd.AddCommand(configCmd)
 }
 
-var servicesCmd = &cobra.Command{
-	Use:   "services",
-	Short: "Print configured services by file",
+var configCmd = &cobra.Command{
+	Use:   "configs",
+	Short: "Print configured proxy configs",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		output, _ := cmd.Flags().GetString("output")
 		configDir := "/etc/proxyx/configs"
+
 		files, err := filepath.Glob(filepath.Join(configDir, "*.yaml"))
 		if err != nil {
 			return err
@@ -33,16 +37,30 @@ var servicesCmd = &cobra.Command{
 			return nil
 		}
 
-		table := tablewriter.NewWriter(os.Stdout)
+		table := tablewriter.NewTable(os.Stdout, tablewriter.WithRenderer(renderer.NewBlueprint(tw.Rendition{
+			Settings: tw.Settings{Separators: tw.Separators{BetweenRows: tw.On}},
+		})),
+			tablewriter.WithConfig(tablewriter.Config{
+				Header: tw.CellConfig{Alignment: tw.CellAlignment{Global: tw.AlignCenter}},
+				Row: tw.CellConfig{
+					Merging:   tw.CellMerging{Mode: tw.MergeHierarchical},
+					Alignment: tw.CellAlignment{Global: tw.AlignLeft},
+				},
+			}),
+		)
 
-		// Set headers depending on -o wide
 		if output == "wide" {
-			table.Header([]string{"FILE", "NAME", "NAMESPACE", "DOMAIN", "PATH", "TYPE", "TARGET", "RATELIMIT", "TLS"})
+			table.Header([]string{
+				"FILE", "NAME", "NAMESPACE",
+				"DOMAIN", "PATH", "TYPE", "TARGET",
+				"RATELIMIT", "TLS",
+			})
 		} else {
 			table.Header([]string{"DOMAIN", "PATH", "TYPE", "TARGET"})
 		}
 
 		for _, file := range files {
+
 			data, _ := os.ReadFile(file)
 			var server common.ServerConfig
 			if err := yaml.Unmarshal(data, &server); err != nil {
@@ -51,25 +69,28 @@ var servicesCmd = &cobra.Command{
 			}
 
 			for _, route := range server.Spec.Routes {
-				target := ""
+
+				var target string
 				switch route.Type {
 				case common.RouteReverseProxy:
 					if len(route.ReverseProxy.Servers) == 1 {
 						target = route.ReverseProxy.Servers[0].URL
 					} else {
-						var parts []string
+						lines := []string{}
 						for _, s := range route.ReverseProxy.Servers {
-							parts = append(parts, s.URL)
+							lines = append(lines, s.URL)
 						}
-						target = strings.Join(parts, "\n")
+						target = strings.Join(lines, "\n")
 					}
 				case common.RouteStatic:
 					target = route.Static.Root
 				}
 
 				if output == "wide" {
+
 					rl := server.Spec.RateLimit
 					tls := server.Spec.TLS
+
 					table.Append([]string{
 						filepath.Base(file),
 						server.Metadata.Name,
@@ -79,8 +100,9 @@ var servicesCmd = &cobra.Command{
 						route.Type.String(),
 						target,
 						fmt.Sprintf("%d req / %ds", rl.Requests, rl.WindowSeconds),
-						fmt.Sprintf("%s \n %s", tls.CertFile, tls.KeyFile),
+						fmt.Sprintf("%s\n%s", tls.CertFile, tls.KeyFile),
 					})
+
 				} else {
 					table.Append([]string{
 						server.Spec.Domain,
@@ -89,7 +111,9 @@ var servicesCmd = &cobra.Command{
 						target,
 					})
 				}
+
 			}
+
 		}
 
 		table.Render()
