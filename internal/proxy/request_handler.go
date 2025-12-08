@@ -16,7 +16,7 @@ import (
 func handleRequest(w http.ResponseWriter, r *http.Request, servers map[string][]routeInfo) {
 	routes, ok := servers[r.Host]
 	if !ok {
-		ServerDefaultPage(w)
+		ServeProxyHomepage(w)
 		return
 	}
 
@@ -54,7 +54,7 @@ func handleRequest(w http.ResponseWriter, r *http.Request, servers map[string][]
 	}
 
 	if matched == nil {
-		ServerDefaultPage(w)
+		ServeProxyHomepage(w)
 		return
 	}
 
@@ -69,7 +69,7 @@ func handleRequest(w http.ResponseWriter, r *http.Request, servers map[string][]
 	case common.RouteReverseProxy:
 		target := matched.loadBalancer.Next()
 		if target == nil {
-			ServerDefaultPage(w)
+			ServeProxyHomepage(w)
 			return
 		}
 
@@ -78,7 +78,7 @@ func handleRequest(w http.ResponseWriter, r *http.Request, servers map[string][]
 
 	case common.RouteStatic:
 		if matched.routeConfig.Static == nil || matched.routeConfig.Static.Root == "" {
-			ServerDefaultPage(w)
+			ServeProxyHomepage(w)
 			return
 		}
 		
@@ -92,13 +92,13 @@ func handleRequest(w http.ResponseWriter, r *http.Request, servers map[string][]
 		indexFile := filepath.Join(staticDir, "index.html")
 		if _, err := os.Stat(indexFile); os.IsNotExist(err) {
 			log.Println("index.html not found at", indexFile)
-			ServerDefaultPage(w)
+			ServeProxyHomepage(w)
 			return
 		}
 
 		http.ServeFile(w, r, indexFile)
 	default:
 		
-		ServerDefaultPage(w)
+		ServeProxyHomepage(w)
 	}
 }

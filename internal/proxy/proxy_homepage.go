@@ -1,12 +1,13 @@
 package proxy
 
+
 import (
 	"net/http"
 	"os"
 	"path/filepath"
 )
 
-func ServerDefaultPage(w http.ResponseWriter) {
+func ServeProxyHomepage(w http.ResponseWriter) {
 	path := filepath.Join("/etc/proxyx/web", "index.html")
 	content, err := os.ReadFile(path)
 	if err != nil {
@@ -18,3 +19,4 @@ func ServerDefaultPage(w http.ResponseWriter) {
 	w.WriteHeader(http.StatusOK)
 	w.Write(content)
 }
+

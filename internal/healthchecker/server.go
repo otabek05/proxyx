@@ -13,8 +13,8 @@ type Server struct {
 
 func (b *Server) SetHealthy(v bool ) {
 	b.mu.Lock()
+	defer b.mu.Unlock()
 	b.Health = v
-	b.mu.Unlock()
 }
 
 func (b *Server) IsHealthy() bool {

@@ -33,6 +33,12 @@ func (p *ProxyServer) Start()  {
 	go func ()  {
 	   log.Println("HTTP Proxy server running on :80")
 	  http.ListenAndServe(":80", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
+		   if len(p.config) == 0 {
+			ServeProxyHomepage(w)
+			return 
+		   }
+		   
 		    if _, ok := p.certCache[r.Host]; ok {
 				target := "https://" + r.Host + r.URL.String()
 			    http.Redirect(w, r, target, http.StatusMovedPermanently)
