@@ -58,7 +58,7 @@ spec:
 
   tls:
     certFile: /path/to/certs/server.crt
-    keyFile:  /path/to/certs/certs/server.key
+    keyFile:  /path/to/certs/server.key
 
   rateLimit:
     requests: 1000
