@@ -133,7 +133,7 @@ Each domain controls its **own request limits**:
 ```yaml
 rateLimit:
   requests: 1000
-  windowSeconds: 5
+  windowSeconds: 2
 ```
 ---
 
