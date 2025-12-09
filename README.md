@@ -324,9 +324,7 @@ sudo rm -rf /etc/proxyx
 sudo systemctl daemon-reload
 ```
 
----
-
-### Automatic Remove
+### Uninstall with Makefile
 
 ```bash
 cd ~/proxyx 
@@ -340,13 +338,17 @@ sudo make uninstall
 ### Mannual Remove
 
 ```bash
-   cd ~/proxyx
-   sudo make uninstall-macos
+  sudo launchctl stop proxyx
+  sudo launchctl unload /Library/LaunchDaemons/proxyx.plist
+
+  sudo rm -f /Library/LaunchDaemons/proxyx.plist
+  sudo rm -f /usr/local/bin/proxyx
+  sudo rm -rf /etc/proxyx
 ```
 
 ---
 
-### Automatic Remove
+### Uninstall with Makefile
 
 ```bash
 cd ~/proxyx 
