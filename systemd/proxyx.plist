@@ -8,8 +8,6 @@
     <key>ProgramArguments</key>
     <array>
         <string>/usr/local/bin/proxyx</string>
-        <string>--config</string>
-        <string>/etc/proxyx/proxy.yaml</string>
     </array>
 
     <key>RunAtLoad</key>
