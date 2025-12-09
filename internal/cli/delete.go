@@ -57,7 +57,7 @@ var deleteCmd = &cobra.Command{
 
 		
 		fmt.Printf("Deleted configuration '%s' (file: %s)\n", name, filepath.Base(matchedFile))
-		reloadProxyX()
+		restartProxyX()
 		return nil
 	},
 }

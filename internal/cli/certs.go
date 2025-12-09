@@ -61,7 +61,7 @@ var certCmd = &cobra.Command{
 		applyCerts(&domain, files)
 
 		fmt.Println("\nReloading ProxyX...")
-		reloadProxyX()
+		restartProxyX()
 	},
 }
 

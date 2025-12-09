@@ -71,7 +71,7 @@ var applyCmd = &cobra.Command{
 		}
 
 		fmt.Println("Configuration applied successfully")
-		reloadProxyX()
+		restartProxyX()
 	},
 }
 
