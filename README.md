@@ -62,15 +62,9 @@ spec:
 
   rateLimit:
     requests: 1000
-    windowSeconds: 5
+    windowSeconds: 2
 
   routes:
-    - name: static-files
-      path: /**
-      type: Static
-      static:
-        root: /path/to/static/file
-
     - name: api-route
       path: /api/v1/**
       type: ReverseProxy
@@ -78,6 +72,12 @@ spec:
         servers:
           - url: http://localhost:8080
           - url: http://localhost:8081
+
+    - name: static-files
+      path: /**
+      type: Static
+      static:
+        root: /path/to/static/file
 ```
 
 ---
