@@ -182,17 +182,19 @@ ProxyX includes a full lifecycle management CLI.
 
 ### ✅ Available Commands
 
-| Command           | Description                              |
-| ----------------- | ---------------------------------------- |
-| `apply`           | Apply configuration file                 |
-| `certs`           | **Interactive TLS issuance via Certbot** |
-| `configs`         | Show active configurations               |
-| `configs -o wide` | Show full detailed configuration         |
-| `delete`          | Delete applied configuration             |
-| `restart`         | Reload ProxyX configuration              |
-| `status`          | Check if ProxyX is running               |
-| `stop`            | Stop ProxyX service                      |
-| `version`         | Show ProxyX version                      |
+| Command           | Description                                     |
+| ----------------- | ----------------------------------------------- |
+| `apply`           | Apply configuration file                        |
+| `certs`           | **Interactive TLS issuance via Certbot**        |
+| `configs`         | Show active configurations                      |
+| `configs -o wide` | Show full detailed configuration                |
+| `delete`          | Delete applied configuration (default behavior) |
+| `delete [name]`   | Delete configuration by its **name**            |
+| `restart`         | Reload ProxyX configuration                     |
+| `status`          | Check if ProxyX is running                      |
+| `stop`            | Stop ProxyX service                             |
+| `version`         | Show ProxyX version                             |
+
 
 ---
 
@@ -275,10 +277,6 @@ ProxyX automatically installs itself as a **Linux system service (`proxyx.servic
 
 ---
 
-✅ ProxyX is now fully removed from your system.
-
----
-
 ## Installation
 
 ```bash
@@ -326,6 +324,8 @@ sudo make uninstall
 cd ..
 sudo rm -rf ~/proxyx
 ```
+
+✅ ProxyX is now fully removed from your system.
 
 ---
 
