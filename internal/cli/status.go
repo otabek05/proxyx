@@ -66,38 +66,41 @@ func checkStatusLinux() {
 	fmt.Printf("%-9s %-7s %-7s %-7s\n", psFields[0], psFields[1], psFields[2], psFields[3])
 }
 
+
+
 func checkStatusMacOS() {
-	cmdCheck := exec.Command("launchctl", "list", "org.proxyx.service")
-	output, _ := cmdCheck.CombinedOutput()
-	status := strings.TrimSpace(string(output))
-
-	if status == "" {
+	cmdCheck := exec.Command("sudo", "launchctl", "print", "system/org.proxyx.service")
+	output, err := cmdCheck.CombinedOutput()
+	if err != nil {
 		fmt.Println("ProxyX is not running")
 		return
 	}
 
+	status := string(output)
 	lines := strings.Split(status, "\n")
-	if len(lines) == 0 {
+	var pid int
+	for _, line := range lines {
+		line = strings.TrimSpace(line)
+		if strings.HasPrefix(line, "pid =") {
+			fmt.Sscanf(line, "pid = %d", &pid)
+			break
+		}
+	}
+
+	if pid == 0 {
 		fmt.Println("ProxyX is not running")
 		return
 	}
 
-	fields := strings.Fields(lines[0])
-	if len(fields) < 3 {
-		fmt.Println("Failed to parse launchctl output")
-		return
-	}
-
-	pidStr := fields[0]
-	pid, err := strconv.Atoi(pidStr)
-	if err != nil || pid == 0 {
-		fmt.Println("ProxyX is not running")
-		return
-	}
-
-	psCmd := exec.Command("ps", "-p", strconv.Itoa(pid), "-o", "pid,pcpu,pmem,etime=", "--no-headers")
+	psCmd := exec.Command("ps", "-p", strconv.Itoa(pid), "-o", "pid,pcpu,pmem,etime")
 	psOutput, _ := psCmd.CombinedOutput()
-	psFields := strings.Fields(string(psOutput))
+	psLines := strings.Split(strings.TrimSpace(string(psOutput)), "\n")
+	if len(psLines) < 2 {
+		fmt.Println("Failed to get process stats")
+		return
+	}
+
+	psFields := strings.Fields(psLines[1])
 	if len(psFields) < 4 {
 		fmt.Println("Failed to get process stats")
 		return
