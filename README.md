@@ -57,8 +57,8 @@ spec:
   domain: localhost
 
   tls:
-    certFile: /home/unknown/certs/localhost/server.crt
-    keyFile:  /home/unknown/certs/localhost/server.key
+    certFile: /path/to/certs/server.crt
+    keyFile:  /path/to/certs/certs/server.key
 
   rateLimit:
     requests: 1000
@@ -69,7 +69,7 @@ spec:
       path: /**
       type: Static
       static:
-        root: /home/otabek/easy365
+        root: /path/to/static/file
 
     - name: api-route
       path: /api/v1/**
@@ -279,29 +279,39 @@ ProxyX automatically installs itself as a **Linux system service (`proxyx.servic
 
 ## Installation
 
+ProxyX supports **Linux** and **macOS**.
+
+
+---
+
+## Linux Installation
+
 ```bash
-git clone https://github.com/yourname/proxyx.git
+git clone https://github.com/otabek05/proxyx.git
 cd proxyx
 sudo make install
 sudo proxyx status 
 ```
 
----
-
-## Security Features
-
-* HTTPS with Let's Encrypt
-* Per‑domain rate limiting
-* Backend health validation
-* Mandatory TLS for production
 
 ---
+
+## MacOS Installation
+
+```bash
+git clone https://github.com/otabek05/proxyx.git
+cd proxyx
+sudo make install-macos
+sudo proxyx status 
+```
 
 ---
 
 ## Uninstallation
 
 To completely remove ProxyX from your system:
+
+## Linux Uninstallation
 
 ### Mannual Remove
 
@@ -321,11 +331,39 @@ sudo systemctl daemon-reload
 ```bash
 cd ~/proxyx 
 sudo make uninstall
-cd ..
-sudo rm -rf ~/proxyx
+```
+
+---
+
+## MacOS Installation
+
+### Mannual Remove
+
+```bash
+   cd ~/proxyx
+   sudo make uninstall-macos
+```
+
+---
+
+### Automatic Remove
+
+```bash
+cd ~/proxyx 
+sudo make uninstall-macos
 ```
 
 ✅ ProxyX is now fully removed from your system.
+
+---
+
+
+## Security Features
+
+* HTTPS with Let's Encrypt
+* Per‑domain rate limiting
+* Backend health validation
+* Mandatory TLS for production
 
 ---
 
@@ -343,7 +381,6 @@ sudo rm -rf ~/proxyx
 Developed by **Otabek** — Go Backend Developer
 
 ---
-
 
 ## 📄 License
 
