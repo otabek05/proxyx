@@ -332,7 +332,7 @@ sudo rm -rf ~/proxyx
 ##  Roadmap
 
 * ✅ Web dashboard
-* ✅ Per‑route rate limits
+* ✅ Per‑domain rate limits
 * ✅ WebSocket proxying
 * ✅ TCP proxy support
 

@@ -56,7 +56,7 @@ var configCmd = &cobra.Command{
 				"RATELIMIT", "TLS",
 			})
 		} else {
-			table.Header([]string{"DOMAIN", "PATH", "TYPE", "TARGET"})
+			table.Header([]string{"NAME","DOMAIN", "PATH", "TYPE", "TARGET"})
 		}
 
 		for _, file := range files {
@@ -105,6 +105,7 @@ var configCmd = &cobra.Command{
 
 				} else {
 					table.Append([]string{
+						server.Metadata.Name,
 						server.Spec.Domain,
 						route.Path,
 						route.Type.String(),

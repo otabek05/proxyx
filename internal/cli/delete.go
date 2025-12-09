@@ -10,36 +10,54 @@ import (
 )
 
 func init() {
-	deleteCmd.Flags().StringP("file", "f", "", "Config file to delete")
-	deleteCmd.MarkFlagRequired("file")
 	rootCmd.AddCommand(deleteCmd)
 }
 
 var deleteCmd = &cobra.Command{
-	Use:   "delete",
+	Use:   "delete [name]",
 	Short: "Delete current configuration file",
 	Example: `
-     sudo proxyx delete -f local-proxy.yaml
-     sudo proxyx delete --file test.yaml
+     sudo proxyx delete local-proxy
+     sudo proxyx delete my-api
   `,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		fileName, _ := cmd.Flags().GetString("file")
+		name := args[0]
 		configDir := "/etc/proxyx/configs"
 
-		if strings.Contains(fileName, "..") || strings.Contains(fileName, "/") {
-			return fmt.Errorf("invalid file name: %s ", fileName)
+		files, err := os.ReadDir(configDir)
+		if err != nil {
+			return fmt.Errorf("failed to read config directory: %v", err)
 		}
 
-		fullPath := filepath.Join(configDir, fileName)
-		if _, err := os.Stat(fullPath); os.IsNotExist(err) {
-			return fmt.Errorf("config file does not exist: %s", fileName)
-		} 
+		var matchedFile string
 
-		if err := os.Remove(fullPath); err != nil {
-			return fmt.Errorf("failed to delete file: %s", fileName)
+		for _, file := range files {
+			if strings.HasSuffix(file.Name(), ".yaml") || strings.HasSuffix(file.Name(), ".yml") {
+
+				fullPath := filepath.Join(configDir, file.Name())
+				content, err := os.ReadFile(fullPath)
+				if err != nil {
+					continue
+				}
+
+				if strings.Contains(string(content), "name: "+name) {
+					matchedFile = fullPath
+					break
+				}
+			}
 		}
 
-		fmt.Printf("Deleted config: %s\n", fileName)
+		if matchedFile == "" {
+			return fmt.Errorf("no configuration found with name: %s", name)
+		}
+
+		if err := os.Remove(matchedFile); err != nil {
+			return fmt.Errorf("failed to delete: %v", err)
+		}
+
+		
+		fmt.Printf("Deleted configuration '%s' (file: %s)\n", name, filepath.Base(matchedFile))
+		reloadProxyX()
 		return nil
 	},
 }

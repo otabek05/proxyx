@@ -2,7 +2,7 @@ apiVersion: proxyx.io/v1
 kind: ProxyConfig
 
 metadata:
-  name: local-proxy
+  name: daeryuk-proxy
   namespace: default
 
 spec:

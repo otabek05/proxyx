@@ -75,13 +75,14 @@ func (p *ProxyServer) loadAllCertificates() error {
 
 		cert , err := tls.LoadX509KeyPair(srv.Spec.TLS.CertFile, srv.Spec.TLS.KeyFile)
 		if err != nil {
-			return fmt.Errorf("TLS load failed for %s: %v", srv.Spec.Domain, err)
+			fmt.Printf("TLS load failed for %s: %v", srv.Spec.Domain, err)
+			continue
 		}
 
 		p.certCache[srv.Spec.Domain] = &cert
 		log.Println("Loaded TLS for:", srv.Spec.Domain)
 	}
-
+	
 	return nil
 }
 

@@ -45,7 +45,7 @@ var applyCmd = &cobra.Command{
 		}
 
 		destDir := "/etc/proxyx/configs"
-		desFile := filepath.Join(destDir, filepath.Base(applyFile))
+		desFile := filepath.Join(destDir, filepath.Base(server.Metadata.Name + ".yaml"))
 		if err := hasRouteConflict(&server, desFile); err != nil {
 			fmt.Println(err.Error())
 			return
@@ -142,7 +142,7 @@ func hasRouteConflict(newCfg *common.ServerConfig, newCfgFile string) error {
 						"conflict detected: domain='%s' path='%s' already exists in %s",
 						newCfg.Spec.Domain,
 						newRoute.Path,
-						filepath.Base(file),
+						existingCfg.Metadata.Name,
 					)
 				}
 			}
