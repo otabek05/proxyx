@@ -16,16 +16,27 @@ type LoadBalancer struct {
 
 
 
-func NewLoadBalancer(backendUrls []common.ProxyServer) (*LoadBalancer, error) {
+func NewLoadBalancer(backendUrls []common.ProxyServer, proxyConfig *common.ProxyConfig) (*LoadBalancer, error) {
 	var servers []*healthchecker.Server
 
 	for _, addr := range backendUrls {
-		b, err := healthchecker.RegisterServer(addr.URL)
+		customUrl, err := url.Parse(addr.URL)
 		if err != nil {
-			return nil, err 
+			return nil,err
 		}
 
-		servers = append(servers, b)
+	    server :=  &healthchecker.Server{
+			URL: customUrl,
+			Health: true,
+		}
+
+		if proxyConfig.HealthCheck.Enabled {
+			 if err := healthchecker.RegisterServer(addr.URL, server); err != nil {
+				return nil, err 
+			 }
+		}
+
+		servers = append(servers, server)
 	}
 
 	return &LoadBalancer{

@@ -22,3 +22,17 @@ func (b *Server) IsHealthy() bool {
 	defer b.mu.RUnlock()
 	return b.Health
 }
+
+
+func NewServer(urlPath  string, server *Server )  error  {
+	parsedUrl , err := url.Parse(urlPath)
+	if err != nil {
+		return  err 
+	}
+   server =  &Server{
+		URL: parsedUrl,
+		Health: true,
+	}
+
+	return nil 
+}

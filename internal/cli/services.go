@@ -89,7 +89,10 @@ var configCmd = &cobra.Command{
 				if output == "wide" {
 
 					rl := server.Spec.RateLimit
-					tls := server.Spec.TLS
+					var tls string 
+					if server.Spec.TLS != nil {
+						tls = fmt.Sprintf("%s\n%s", server.Spec.TLS.CertFile, server.Spec.TLS.KeyFile)
+					}
 
 					table.Append([]string{
 						filepath.Base(file),
@@ -100,7 +103,7 @@ var configCmd = &cobra.Command{
 						route.Type.String(),
 						target,
 						fmt.Sprintf("%d req / %ds", rl.Requests, rl.WindowSeconds),
-						fmt.Sprintf("%s\n%s", tls.CertFile, tls.KeyFile),
+						tls,
 					})
 
 				} else {

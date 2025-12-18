@@ -2,7 +2,6 @@ package healthchecker
 
 import (
 	"net/http"
-	"net/url"
 	"sync"
 	"time"
 )
@@ -16,22 +15,12 @@ type Registry struct {
 var global = &Registry{}
 
 
-func RegisterServer(rawURL string) (*Server, error) {
-	parsedURL , err := url.Parse(rawURL)
-	if err != nil {
-		return nil, err 
-	}
-
-	backend := &Server{
-		URL: parsedURL,
-		Health: true,
-	}
-
+func RegisterServer(rawURL string, backend *Server) error {
 	global.mu.Lock()
 	global.servers = append(global.servers, backend)
 	global.mu.Unlock()
 
-	return backend,nil
+	return nil
 }
 
 func Start(interval time.Duration) {

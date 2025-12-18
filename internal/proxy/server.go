@@ -19,7 +19,7 @@ type ProxyServer struct {
 
 func NewServer(config []common.ServerConfig, proxyConfig *common.ProxyConfig) *ProxyServer {
 	p := &ProxyServer{config: config, proxyConfig: proxyConfig}
-	p.router = NewRouter(config)
+	p.router = NewRouter(config, p.proxyConfig)
 	return p
 }
 
@@ -41,10 +41,10 @@ func (p *ProxyServer) Start() {
 		Handler:           p.router,
 		TLSConfig:         tlsConfig,
 		ReadTimeout:       p.proxyConfig.HTTPS.ReadTimeout,
-		ReadHeaderTimeout: 10 * time.Second,
-		WriteTimeout:      30 * time.Second,
-		IdleTimeout:       60 * time.Second,
-		MaxHeaderBytes:    1 << 20, 
+		ReadHeaderTimeout: p.proxyConfig.HTTPS.ReadHeaderTimeout,
+		WriteTimeout:      p.proxyConfig.HTTPS.WriteTimeout,
+		IdleTimeout:       p.proxyConfig.HTTPS.IdleTimeout,
+		MaxHeaderBytes:    p.proxyConfig.HTTPS.MaxHeaderBytes, 
 	}
 
 	log.Println("HTTPS Proxy server running on :443")
@@ -100,11 +100,11 @@ func (p *ProxyServer) runHTTP()  {
 			p.router.ServeHTTP(w, r)
 		}),
 
-		ReadHeaderTimeout: 5 * time.Second,
-		ReadTimeout:       10 * time.Second,
-		WriteTimeout:      10 * time.Second,
-		IdleTimeout:       30 * time.Second,
-		MaxHeaderBytes:    1 << 20,
+		ReadHeaderTimeout: p.proxyConfig.HTTP.ReadHeaderTimeout,
+		ReadTimeout:       p.proxyConfig.HTTP.ReadTimeout,
+		WriteTimeout:      p.proxyConfig.HTTP.WriteTimeout,
+		IdleTimeout:       p.proxyConfig.HTTP.IdleTimeout,
+		MaxHeaderBytes:    p.proxyConfig.HTTP.MaxHeaderBytes,
 	}
 
 	log.Println("HTTP Proxy server running on :80")

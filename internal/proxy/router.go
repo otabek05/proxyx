@@ -13,7 +13,7 @@ type routeInfo struct {
 		routeConfig   *common.RouteConfig
 	}
 
-func NewRouter(config []common.ServerConfig) http.Handler {
+func NewRouter(config []common.ServerConfig, proxyConfig *common.ProxyConfig) http.Handler {
 	servers := make(map[string][]routeInfo)
 
 	for _, server := range config {
@@ -32,7 +32,7 @@ func NewRouter(config []common.ServerConfig) http.Handler {
 			var lb *LoadBalancer
 			if route.Type == common.RouteReverseProxy{
 				var err error
-				lb, err = NewLoadBalancer(route.ReverseProxy.Servers)
+				lb, err = NewLoadBalancer(route.ReverseProxy.Servers, proxyConfig)
 				if err != nil {
 					panic(err)
 				}
