@@ -28,7 +28,9 @@ func (p *ProxyServer) Start() {
 		log.Fatal(err)
 	}
 
-	healthchecker.Start(3 * time.Second)
+    if p.proxyConfig.HealthCheck.Enabled {
+		healthchecker.Start(3 * time.Second)
+	}	
 
 	go p.runHTTP()
 
