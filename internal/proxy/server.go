@@ -29,35 +29,9 @@ func (p *ProxyServer) Start() {
 
 	healthchecker.Start(3 * time.Second)
 
-	httpServer := &http.Server{
-		Addr: ":80",
-		Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			if len(p.config) == 0 {
-				ServeProxyHomepage(w)
-				return
-			}
+	go p.runHTTP()
 
-			if _, ok := p.certCache[r.Host]; ok {
-				target := "https://" + r.Host + r.URL.String()
-				http.Redirect(w, r, target, http.StatusMovedPermanently)
-				return
-			}
-
-			p.router.ServeHTTP(w, r)
-		}),
-
-		ReadHeaderTimeout: 5 * time.Second,
-		ReadTimeout:       10 * time.Second,
-		WriteTimeout:      10 * time.Second,
-		IdleTimeout:       30 * time.Second,
-		MaxHeaderBytes:    1 << 20,
-	}
-
-	go func() {
-		log.Println("HTTP Proxy server running on :80")
-		log.Fatal(httpServer.ListenAndServe())
-	}()
-
+	
 	tlsConfig := &tls.Config{
 		GetCertificate: p.getCertificate,
 	}
@@ -105,4 +79,56 @@ func (p *ProxyServer) getCertificate(tslHello *tls.ClientHelloInfo) (*tls.Certif
 	}
 
 	return nil, fmt.Errorf("no TLS cert for domain: %s", domain)
+}
+
+
+func (p *ProxyServer) runHTTP()  {
+	httpServer := &http.Server{
+		Addr: ":80",
+		Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			if len(p.config) == 0 {
+				ServeProxyHomepage(w)
+				return
+			}
+
+			if _, ok := p.certCache[r.Host]; ok {
+				target := "https://" + r.Host + r.URL.String()
+				http.Redirect(w, r, target, http.StatusMovedPermanently)
+				return
+			}
+
+			p.router.ServeHTTP(w, r)
+		}),
+
+		ReadHeaderTimeout: 5 * time.Second,
+		ReadTimeout:       10 * time.Second,
+		WriteTimeout:      10 * time.Second,
+		IdleTimeout:       30 * time.Second,
+		MaxHeaderBytes:    1 << 20,
+	}
+
+	log.Println("HTTP Proxy server running on :80")
+	log.Fatal(httpServer.ListenAndServe())
+}
+
+
+func (p *ProxyServer) runHTTPS() {
+
+	tlsConfig := &tls.Config{
+		GetCertificate: p.getCertificate,
+	}
+
+	server := &http.Server{
+		Addr:              ":443",
+		Handler:           p.router,
+		TLSConfig:         tlsConfig,
+		ReadTimeout:       15 * time.Second,
+		ReadHeaderTimeout: 10 * time.Second,
+		WriteTimeout:      30 * time.Second,
+		IdleTimeout:       60 * time.Second,
+		MaxHeaderBytes:    1 << 20, 
+	}
+
+	log.Println("HTTPS Proxy server running on :443")
+	log.Fatal(server.ListenAndServeTLS("", ""))
 }
