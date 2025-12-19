@@ -13,7 +13,7 @@ spec:
 #    keyFile:  /home/unknown/certs/localhost/server.key
 
   rateLimit:
-    requests: 30
+    requests: 1000
     windowSeconds: 1
 
   routes:

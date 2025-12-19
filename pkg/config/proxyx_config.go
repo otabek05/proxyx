@@ -35,6 +35,24 @@ func LoadProxyXConfig() (*common.ProxyConfig, error ) {
 }
 
 
+func SaveProxyXConfig(cfg *common.ProxyConfig) error {
+	path := "/etc/proxyx/config/config.yaml"
+
+	data, err := yaml.Marshal(cfg)
+	if err != nil {
+		return err
+	}
+
+	tmp := path + ".tmp"
+	err  = os.WriteFile(tmp, data, 0644 )
+	if err != nil {
+		return err
+	}
+
+	return os.Rename(tmp, path)
+}
+
+
 func createDefaultProxyConfig(path string ) error  {
 	if err := os.MkdirAll(filepath.Dir(path), 0755); err != nil {
 		return err 

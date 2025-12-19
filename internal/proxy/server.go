@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"time"
 )
 
 type ProxyServer struct {
@@ -29,7 +28,7 @@ func (p *ProxyServer) Start() {
 	}
 
     if p.proxyConfig.HealthCheck.Enabled {
-		healthchecker.Start(3 * time.Second)
+		healthchecker.Start( p.proxyConfig.HealthCheck.Interval)
 	}	
 
 	go p.runHTTP()
