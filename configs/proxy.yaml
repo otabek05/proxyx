@@ -31,3 +31,9 @@ spec:
         servers:
           - url: http://localhost:8080
           - url: http://localhost:8081
+
+    - name: websocket-route
+      path: /ws/**    
+      type: Websocket
+      websocket:
+        url: ws://localhost:9000/ws

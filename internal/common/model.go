@@ -36,6 +36,7 @@ type RouteConfig struct {
 	Type         RouteType            `yaml:"type,omitempty"`
 	Static       *StaticConfig     `yaml:"static,omitempty"`
 	ReverseProxy *ReverseProxySpec `yaml:"reverseProxy"`
+	Websocket   *WebsocketConfig   `yaml:"websocket"`
 }
 
 type StaticConfig struct {
@@ -50,6 +51,10 @@ type ProxyServer struct {
 	URL string `yaml:"url"`
 }
 
+type WebsocketConfig struct {
+	URL string `yaml:"url"`
+}
+
 func ToDomainList(p []ServerConfig) []string {
 	var domains []string
 	for _, server := range p {
@@ -58,3 +63,5 @@ func ToDomainList(p []ServerConfig) []string {
 
 	return domains
 }
+
+

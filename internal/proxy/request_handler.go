@@ -2,6 +2,7 @@ package proxy
 
 import (
 	"ProxyX/internal/common"
+	"fmt"
 	"net"
 	"net/http"
 	"strings"
@@ -29,9 +30,11 @@ func handleRequest(w http.ResponseWriter, r *http.Request, servers map[string][]
 
 	switch matched.routeConfig.Type {
 	case common.RouteReverseProxy:
-		reverseProxyxHandler(w,r, matched)
+		reverseProxyxHandler(w, r, matched)
 	case common.RouteStatic:
-		staticRouteHandler(w, r , matched)
+		staticRouteHandler(w, r, matched)
+	case common.RouteWebsocket:
+		websocketProxyHandler(w, r, matched)
 	default:
 		ServeProxyHomepage(w)
 	}
@@ -67,4 +70,12 @@ func findMatchingRoute(routes []routeInfo, path string) *routeInfo {
 	}
 
 	return nil
+}
+
+func printServers(servers map[string][]routeInfo) {
+	for k, v := range servers {
+		for _, r := range v {
+			fmt.Printf("Host: %s Route: %s\n", k, r.routeConfig.Path)
+		}
+	}
 }

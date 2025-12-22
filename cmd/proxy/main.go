@@ -15,16 +15,19 @@ func main() {
 		cli.Execute()
 		return
 	}
+
+	proxyConfig, err := config.LoadProxyXConfig()
+	if err != nil {
+		log.Fatalf("Failed to load proxy config: %v", err)
+	}
+
 	
 	serverConfig, err := config.LoadConfig()
 	if err != nil {
 		log.Fatalf("Failed to load config: %v", err)
 	}
 
-	proxyConfig, err := config.LoadProxyXConfig()
-	if err != nil {
-		log.Fatalf("Failed to load proxy config: %v", err)
-	}
+	fmt.Println(serverConfig)
 
 	srv := proxy.NewServer(serverConfig, proxyConfig)
 	srv.Start()

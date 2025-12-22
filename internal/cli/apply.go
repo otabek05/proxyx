@@ -99,7 +99,10 @@ func isValidFormat(srv *common.ServerConfig) error {
 			if route.Static == nil || route.Static.Root == "" {
 				return fmt.Errorf("server '%s' route '%s' of type 'static' missing dir", srv.Spec.Domain, route.Path)
 			}
-
+		case common.RouteWebsocket:
+			if route.Websocket == nil || route.Websocket.URL == "" {
+				return fmt.Errorf("server '%s' route '%s' of type 'websocket' missing url", srv.Spec.Domain, route.Path)
+			}
 		default:
 			return fmt.Errorf("server '%s' route '%s' has invalid type '%s'", srv.Spec.Domain, route.Path, route.Type)
 		}

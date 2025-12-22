@@ -6,12 +6,13 @@ const (
     RouteStatic       RouteType = "Static"
     RouteReverseProxy RouteType = "ReverseProxy"
     RouteRedirect     RouteType = "Redirect"
+    RouteWebsocket    RouteType = "Websocket"
 )
 
 
 func (r RouteType) IsValid() bool {
     switch r {
-    case RouteStatic, RouteReverseProxy, RouteRedirect:
+    case RouteStatic, RouteReverseProxy, RouteRedirect, RouteWebsocket:
         return true
     }
     return false
