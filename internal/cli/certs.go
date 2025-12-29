@@ -15,9 +15,55 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-func init() {
-	rootCmd.AddCommand(certCmd)
+func (c *CLI) certCmd() *cobra.Command {
+	return &cobra.Command{
+		Use:   "cert",
+	    Short: "Issue TLS certificate for a domain using certbot",
+		Run: func(cmd *cobra.Command, args []string)  {
+			configDir := "/etc/proxyx/conf.d"
+		files, err := filepath.Glob(filepath.Join(configDir, "*.yaml"))
+		if err != nil || len(files) == 0 {
+			fmt.Println("No config files found.")
+			return
+		}
+
+		domainMap := make(map[int]string)
+		printDomains(files, domainMap)
+		if len(domainMap) == 0 {
+			fmt.Println("No domains found in configs.")
+			return
+		}
+
+		reader := bufio.NewReader(os.Stdin)
+		domain, err := requestDomain(reader, domainMap)
+		if err != nil {
+			os.Exit(1)
+		}
+
+		email, err := requestEmail(reader)
+		if err != nil {
+			fmt.Println("Email input cancelled.")
+			return
+		}
+
+		fmt.Println("\nRequesting certificate for:", domain)
+		c.Service.Stop()
+
+		if err := requestCert(domain, email); err != nil {
+			fmt.Println("Certbot failed:", err)
+			os.Exit(1)
+		}
+
+		fmt.Println("\nCertificate issued successfully!")
+		applyCerts(&domain, files)
+
+		fmt.Println("\nReloading ProxyX...")
+		c.Service.Restart()
+		},
+	}
 }
+
+/*
 
 var certCmd = &cobra.Command{
 	Use:   "cert",
@@ -64,6 +110,8 @@ var certCmd = &cobra.Command{
 		restartProxyX()
 	},
 }
+
+*/
 
 func requestDomain(reader *bufio.Reader, domainMap map[int]string) (string, error) {
 	for {

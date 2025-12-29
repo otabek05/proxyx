@@ -10,10 +10,80 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-var applyFile string
 
+func (c *CLI) applyConfigCmd() *cobra.Command {
+	var applyFile string
+
+	cmd := &cobra.Command{
+		Use:   "apply",
+		Short: "Apply configuration file to ProxyX",
+		RunE: func(cmd *cobra.Command, args []string)error {
+		  return c.runApply(applyFile)
+		},
+	}
+
+	cmd.Flags().StringVarP(
+		&applyFile,
+		"file",
+		"f",
+		"",
+		"Path to config file to add",
+	)
+
+	return cmd
+}
+
+func (c *CLI) runApply(file string) error {
+	if file == "" {
+		return fmt.Errorf("Please provide a config file path using -f")
+	}
+
+	data, err := os.ReadFile(file)
+	if err != nil {
+		return fmt.Errorf("Cannot read file: %v", err)
+	}
+
+	var server common.ServerConfig
+	err = yaml.Unmarshal(data, &server)
+	if err != nil {
+		return fmt.Errorf("Invalid YAML: %v", err)
+	}
+
+	if err := isValidFormat(&server); err != nil {
+		return err 
+	}
+
+	destDir := "/etc/proxyx/conf.d"
+	desFile := filepath.Join(destDir, filepath.Base(server.Metadata.Name+".yaml"))
+	if err := hasRouteConflict(&server, desFile); err != nil {
+		return err
+	}
+
+	err = os.MkdirAll(destDir, 0755)
+	if err != nil {
+		return fmt.Errorf("Failed to created dir:%v", err)
+	}
+
+	if server.Spec.RateLimit == nil {
+		server.Spec.RateLimit = &common.RateLimitConfig{
+			Requests:      1200,
+			WindowSeconds: 1,
+		}
+	}
+
+	err = os.WriteFile(desFile, data, 0644)
+	if err != nil {
+		return fmt.Errorf("Failed to write config file: %v", err)
+	}
+
+	fmt.Println("Configuration applied successfully")
+	c.Service.Restart()
+	return nil
+}
+
+/*
 func init() {
-	rootCmd.AddCommand(applyCmd)
+	//	rootCmd.AddCommand(applyCmd)
 	applyCmd.Flags().StringVarP(&applyFile, "file", "f", "", "Path to config file to add")
 }
 
@@ -75,6 +145,7 @@ var applyCmd = &cobra.Command{
 	},
 }
 
+*/
 func isValidFormat(srv *common.ServerConfig) error {
 	if srv.Spec.Domain == "" {
 		return fmt.Errorf("server missing domain")
@@ -150,19 +221,6 @@ func hasRouteConflict(newCfg *common.ServerConfig, newCfgFile string) error {
 				}
 			}
 		}
-	}
-
-	return nil
-}
-
-func hasDuplicate[T comparable](slice []T) error {
-	seen := make(map[T]bool)
-	for _, v := range slice {
-		if seen[v] {
-			return fmt.Errorf("duplicate: %v", v)
-		}
-
-		seen[v] = true
 	}
 
 	return nil

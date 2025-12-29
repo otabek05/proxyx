@@ -2,6 +2,7 @@ package main
 
 import (
 	"ProxyX/internal/cli"
+	"ProxyX/internal/platform"
 	"ProxyX/internal/proxy"
 	"ProxyX/pkg/config"
 	"fmt"
@@ -12,7 +13,13 @@ import (
 func main() {
 	requireRoot()
 	if len(os.Args) > 1 {
-		cli.Execute()
+		service, err  := platform.NewService()
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		cmd := cli.NewCLI(service)
+		cmd.Execute()
 		return
 	}
 
@@ -26,8 +33,6 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to load config: %v", err)
 	}
-
-	fmt.Println(serverConfig)
 
 	srv := proxy.NewServer(serverConfig, proxyConfig)
 	srv.Start()

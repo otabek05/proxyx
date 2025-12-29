@@ -1,19 +1,21 @@
 package cli
 
 import (
-	"fmt"
-	"os/exec"
-	"runtime"
-	"strconv"
-	"strings"
-
 	"github.com/spf13/cobra"
 )
 
-func init() {
-	rootCmd.AddCommand(statusCmd)
+func (c *CLI) statusCmd() *cobra.Command {
+	return &cobra.Command{
+		Use:   "status",
+		Short: "Check if ProxyX is running or not",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return c.Service.Status()
+		},
+	}
 }
 
+
+/*
 var statusCmd = &cobra.Command{
 	Use:   "status",
 	Short: "Check if ProxyX is running or not",
@@ -66,8 +68,6 @@ func checkStatusLinux() {
 	fmt.Printf("%-9s %-7s %-7s %-7s\n", psFields[0], psFields[1], psFields[2], psFields[3])
 }
 
-
-
 func checkStatusMacOS() {
 	cmdCheck := exec.Command("sudo", "launchctl", "print", "system/org.proxyx.service")
 	output, err := cmdCheck.CombinedOutput()
@@ -110,3 +110,6 @@ func checkStatusMacOS() {
 	fmt.Println("PID       CPU%    MEM%    Uptime")
 	fmt.Printf("%-9s %-7s %-7s %-7s\n", psFields[0], psFields[1], psFields[2], psFields[3])
 }
+
+
+*/

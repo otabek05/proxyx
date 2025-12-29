@@ -1,19 +1,24 @@
 package cli
 
 import (
-	"fmt"
-	"os/exec"
-	"runtime"
-
 	"github.com/spf13/cobra"
 )
 
-func init() {
-	rootCmd.AddCommand(stopCmd)
+func (c *CLI) stopCmd() *cobra.Command {
+	return &cobra.Command{
+		Use:   "stop",
+		Short: "Stops running proxyx service",
+		RunE: func(cmd *cobra.Command, args []string) error  {
+			return c.Service.Stop()
+		},
+	}
+
 }
 
+
+/*
 var stopCmd = &cobra.Command{
-	Use: "stop",
+	Use:   "stop",
 	Short: "Stops running proxyx service",
 	Run: func(cmd *cobra.Command, args []string) {
 		stopProxyX()
@@ -42,3 +47,4 @@ func stopProxyX() {
 
 	fmt.Println("ProxyX stopped successfully")
 }
+*/
