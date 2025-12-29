@@ -80,71 +80,7 @@ func (c *CLI) runApply(file string) error {
 	return nil
 }
 
-/*
-func init() {
-	//	rootCmd.AddCommand(applyCmd)
-	applyCmd.Flags().StringVarP(&applyFile, "file", "f", "", "Path to config file to add")
-}
 
-var applyCmd = &cobra.Command{
-	Use:   "apply",
-	Short: "Apply configuration file to ProxyX",
-	Run: func(cmd *cobra.Command, args []string) {
-		if applyFile == "" {
-			fmt.Println("Please provide a config file path using -f")
-			return
-		}
-
-		data, err := os.ReadFile(applyFile)
-		if err != nil {
-			fmt.Println("Cannot read file:", err)
-			return
-		}
-
-		var server common.ServerConfig
-		err = yaml.Unmarshal(data, &server)
-		if err != nil {
-			fmt.Println("Invalid YAML:", err)
-			return
-		}
-
-		if err := isValidFormat(&server); err != nil {
-			fmt.Println(err.Error())
-			return
-		}
-
-		destDir := "/etc/proxyx/conf.d"
-		desFile := filepath.Join(destDir, filepath.Base(server.Metadata.Name+".yaml"))
-		if err := hasRouteConflict(&server, desFile); err != nil {
-			fmt.Println(err.Error())
-			return
-		}
-
-		err = os.MkdirAll(destDir, 0755)
-		if err != nil {
-			fmt.Println("Failed to created dir: ", err)
-			return
-		}
-
-		if server.Spec.RateLimit == nil {
-			server.Spec.RateLimit = &common.RateLimitConfig{
-				Requests:      1200,
-				WindowSeconds: 1,
-			}
-		}
-
-		err = os.WriteFile(desFile, data, 0644)
-		if err != nil {
-			fmt.Println("Failed to write config file:", err)
-			return
-		}
-
-		fmt.Println("Configuration applied successfully")
-		restartProxyX()
-	},
-}
-
-*/
 func isValidFormat(srv *common.ServerConfig) error {
 	if srv.Spec.Domain == "" {
 		return fmt.Errorf("server missing domain")

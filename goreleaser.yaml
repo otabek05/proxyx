@@ -1,0 +1,32 @@
+project_name: proxyx
+
+builds:
+  - id: proxyx
+    main: ./cmd/proxyx/main.go
+    binary: proxyx
+    goos: [linux]
+    goarch: [amd64]
+    env:
+      - CGO_ENABLED=0
+
+nfpms:
+  - id: proxyx-deb
+    package_name: proxyx
+    builds: [proxyx]
+    formats: [deb,rpm]
+
+    maintainer: Otabek Toshmukhammedov <otabektoshmukhammedov@gmail.com>
+    description: ProxyX Reverse Proxy Service
+    license: MIT
+    bindir: /usr/local/bin
+    contents:
+      - src: systemd/proxyx.service
+        dst: /etc/systemd/system/proxyx.service
+
+      - src: web
+        dst: /etc/proxyx/web
+
+    scripts:
+      preinstall: releaser/debian/scripts/preinstall.sh
+      postinstall: releaser/debian/scripts/postinstall.sh
+      preremove: releaser/debian/scripts/preremove.sh

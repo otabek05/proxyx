@@ -30,6 +30,11 @@ func (s *Service) Stop() error {
 }
 
 func (s *Service) Restart() error {
+	cmd := exec.Command("sudo", "systemctl", "restart", "proxyx")
+	output, err  := cmd.CombinedOutput()
+	if err != nil {
+		return  fmt.Errorf("Error: %v, Output: %s", err , string(output)) 
+	}
 
 	return nil
 }
