@@ -1,32 +1,66 @@
+version: 2
 project_name: proxyx
 
 builds:
   - id: proxyx
     main: ./cmd/proxyx/main.go
     binary: proxyx
-    goos: [linux]
-    goarch: [amd64]
+    goos:
+      - linux
+      - darwin
+    goarch:
+      - amd64
+      - arm64
     env:
       - CGO_ENABLED=0
 
 nfpms:
-  - id: proxyx-deb
+  - id: proxyx-linux
     package_name: proxyx
-    builds: [proxyx]
-    formats: [deb,rpm]
+    builds:
+      - proxyx
+    formats:
+      - deb
+      - rpm
 
     maintainer: Otabek Toshmukhammedov <otabektoshmukhammedov@gmail.com>
     description: ProxyX Reverse Proxy Service
     license: MIT
     bindir: /usr/local/bin
+
     contents:
-      - src: systemd/proxyx.service
+      - src: releaser/linux/systemd/proxyx.service
         dst: /etc/systemd/system/proxyx.service
 
       - src: web
         dst: /etc/proxyx/web
 
     scripts:
-      preinstall: releaser/debian/scripts/preinstall.sh
-      postinstall: releaser/debian/scripts/postinstall.sh
-      preremove: releaser/debian/scripts/preremove.sh
+      preinstall: releaser/linux/scripts/preinstall.sh
+      postinstall: releaser/linux/scripts/postinstall.sh
+      preremove: releaser/linux/scripts/preremove.sh
+
+
+brews:
+  - name: proxyx
+    homepage: https://github.com/otabek05/proxyx
+    description: ProxyX Reverse Proxy Service
+    license: MIT
+
+    repository:
+      owner: otabek05
+      name: homebrew-proxyx
+      branch: main
+
+    install: |
+      bin.install "proxyx"
+      etc.install Dir["web"] => "proxyx"
+
+    post_install: |
+      system "sh", "-e", "-c", <<~'EOS'
+        mkdir -p "#{etc}/proxyx"
+        if [ -d "#{etc}/proxyx/web" ]; then
+          cp -R "#{etc}/proxyx/web/"* "#{etc}/proxyx/" || true
+          rm -rf "#{etc}/proxyx/web"
+        fi
+      EOS

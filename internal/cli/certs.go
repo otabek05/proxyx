@@ -2,7 +2,7 @@ package cli
 
 import (
 	"ProxyX/internal/common"
-	"ProxyX/utils"
+	"ProxyX/internal/utils"
 	"bufio"
 	"errors"
 	"fmt"
