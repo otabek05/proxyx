@@ -27,6 +27,7 @@ func main() {
 
 	runtime.GOMAXPROCS(runtime.NumCPU())
 	debug.SetGCPercent(300)
+	
 
 	proxyConfig, err := config.LoadProxyXConfig()
 	if err != nil {
