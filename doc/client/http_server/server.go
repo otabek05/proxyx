@@ -16,15 +16,26 @@ type ApiResponse struct {
 func main() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		log.Printf("Request: ip: %s, path: %s\n ", r.RemoteAddr, r.URL.Path)
-		response := &ApiResponse{
-			Message: "success",
-			Data: "raw data",
-			StatusCode: "1002",
-		}
+	log.Printf(
+		"Request from proxy | remote=%s | host=%s | proto=%s | xfp=%s\n",
+		r.RemoteAddr,
+		r.Host,
+		r.Proto,
+		r.Header.Get("X-Forwarded-Proto"),
+	)
 
-		json.NewEncoder(w).Encode(response)
-	})
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+
+	response := ApiResponse{
+		Message:    "success",
+		Data:       "raw data",
+		StatusCode: "1002",
+	}
+
+	_ = json.NewEncoder(w).Encode(response)
+})
+
 
 	log.Println("Server started on port 8080")
 	if err := http.ListenAndServe(":8080", mux); err != nil {

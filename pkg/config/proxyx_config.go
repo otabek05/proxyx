@@ -73,20 +73,21 @@ func createDefaultProxyConfig(path string ) error  {
 }
 
 
+
 func defaultConfig() common.ProxyConfig {
 	return common.ProxyConfig{
 		HTTP: common.HTTPConfig{
-			ReadTimeout:       5 * time.Second,
-			ReadHeaderTimeout: 3 * time.Second,
-			WriteTimeout:      10 * time.Second,
-			IdleTimeout:       20 * time.Second,
+			ReadTimeout:       3 * time.Second,
+			ReadHeaderTimeout: 2 * time.Second,
+			WriteTimeout:      5 * time.Second,
+			IdleTimeout:       15 * time.Second,
 			MaxHeaderBytes:    1024 * 1024, // 1MB
 		},
 		HTTPS: common.HTTPSConfig{
-			ReadTimeout:       15 * time.Second,
-			ReadHeaderTimeout: 5 * time.Second,
-			WriteTimeout:      30 * time.Second,
-			IdleTimeout:       60 * time.Second,
+			ReadTimeout:       5 * time.Second,
+			ReadHeaderTimeout: 3 * time.Second,
+			WriteTimeout:      10 * time.Second,
+			IdleTimeout:       30 * time.Second,
 			MaxHeaderBytes:    1024 * 1024, // 1MB
 		},
 		HealthCheck: common.HealthCheckConfig{

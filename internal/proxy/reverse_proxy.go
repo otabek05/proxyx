@@ -1,6 +1,8 @@
 package proxy
 
 import (
+	"crypto/tls"
+	"log"
 	"sync"
 	"time"
 
@@ -31,7 +33,14 @@ func (p *ProxyServer) reverseProxyxHandler(ctx *fasthttp.RequestCtx, matched *ro
 			IsTLS:                         target.Scheme == "https",
 			MaxConns:                      2000,
 			MaxIdleConnDuration:           30 * time.Second,
+			ReadTimeout:                   10 * time.Second,
+			WriteTimeout:                  10 * time.Second,
 			DisableHeaderNamesNormalizing: true,
+			TLSConfig: &tls.Config{
+				ServerName:         target.Hostname(),
+				InsecureSkipVerify: false,
+				MinVersion:         tls.VersionTLS12,
+			},
 		}
 
 		p.proxies[proxyKey] = proxy
@@ -49,12 +58,20 @@ func (p *ProxyServer) reverseProxyxHandler(ctx *fasthttp.RequestCtx, matched *ro
 		clientIP = ctx.RemoteAddr().String()
 	}
 
-	req.Header.Set("X-Forwarded-For", clientIP)
-	req.Header.Set("X-Forwarded-Host", string(ctx.Host()))
-	req.Header.Set("X-Forwarded-Proto", "http")
+	if xff := req.Header.Peek("X-Forwarded-For"); len(xff) > 0 {
+		req.Header.Set("X-Forwarded-For", string(xff)+", "+clientIP)
+	} else {
+		req.Header.Set("X-Forwarded-For", clientIP)
+	}
 
-	if err := proxy.DoTimeout(req, resp, 5*time.Second); err != nil {
+	//req.Header.Set("X-Forwarded-For", clientIP)
+	req.Header.Set("X-Forwarded-Host", string(ctx.Host()))
+	req.Header.Set("X-Forwarded-Proto", map[bool]string{true: "https", false: "http"}[ctx.IsTLS()])
+
+	if err := proxy.DoTimeout(req, resp, 5 *time.Second); err != nil {
+		log.Println(err)
 		ctx.Error("Failed to reach backend", fasthttp.StatusBadGateway)
+		return
 	}
 
 	resp.CopyTo(&ctx.Response)

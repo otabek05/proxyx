@@ -54,7 +54,7 @@ func (p *ProxyServer) Start() {
 		IdleTimeout:        p.proxyConfig.HTTPS.IdleTimeout,
 		ReadBufferSize:     4096,
 		WriteBufferSize:    4096,
-		MaxRequestBodySize: p.proxyConfig.HTTPS.MaxHeaderBytes,
+		MaxRequestBodySize: 1024 * 1024,
 	}
 
 	log.Println("HTTPS Proxy server running on :443")
@@ -97,7 +97,7 @@ func (p *ProxyServer) runHTTP() {
 	handler := func(ctx *fasthttp.RequestCtx) {
 		if len(p.config) == 0 {
 			ctx.SetStatusCode(fasthttp.StatusOK)
-			ctx.SetBodyString("Proxy Homepage")
+		    ServeProxyHomepage(ctx)
 			return
 		}
 
