@@ -8,9 +8,10 @@ metadata:
 spec:
   domain: localhost
 
-#  tls:
-#    certFile: /home/unknown/certs/localhost/server.crt
-#    keyFile:  /home/unknown/certs/localhost/server.key
+  tls:
+    certFile: /Users/otabektoshmukhammedov/localhost.pem
+    keyFile:  /Users/otabektoshmukhammedov/localhost-key.pem
+
 
   rateLimit:
     requests: 1000
