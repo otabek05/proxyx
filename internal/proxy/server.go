@@ -5,8 +5,9 @@ import (
 	"ProxyX/internal/healthchecker"
 	"crypto/tls"
 	"fmt"
-	"log"
 	"github.com/valyala/fasthttp"
+	wsProxy "github.com/yeqown/fasthttp-reverse-proxy/v2"
+	"log"
 )
 
 type ProxyServer struct {
@@ -15,15 +16,19 @@ type ProxyServer struct {
 	config      []common.ServerConfig
 	certCache   map[string]*tls.Certificate
 	proxies     map[string]*fasthttp.Client
+	wsProxies   map[string]*wsProxy.WSReverseProxy
 }
 
 func NewServer(config []common.ServerConfig, proxyConfig *common.ProxyConfig) *ProxyServer {
 	p := &ProxyServer{
-		config: config, 
+		config:      config,
 		proxyConfig: proxyConfig,
-		proxies: make(map[string]*fasthttp.Client),
+		proxies:     make(map[string]*fasthttp.Client),
+		wsProxies:   make(map[string]*wsProxy.WSReverseProxy),
 	}
+
 	p.router = p.NewRouter(config, p.proxyConfig)
+	p.configureWSProxy()
 	return p
 }
 
@@ -36,14 +41,11 @@ func (p *ProxyServer) Start() {
 		healthchecker.Start(p.proxyConfig.HealthCheck.Interval)
 	}
 
-
-
 	go p.runHTTP()
 
 	tlsConfig := &tls.Config{
 		GetCertificate: p.getCertificate,
 	}
-
 
 	log.Println("HTTPS Proxy server running on :443")
 	httpsServer := &fasthttp.Server{
@@ -52,13 +54,13 @@ func (p *ProxyServer) Start() {
 		ReadTimeout:        p.proxyConfig.HTTPS.ReadTimeout,
 		WriteTimeout:       p.proxyConfig.HTTPS.WriteTimeout,
 		IdleTimeout:        p.proxyConfig.HTTPS.IdleTimeout,
-		ReadBufferSize:     4 *1024 *1024,
-		WriteBufferSize:    4 *1024 *1024,
+		ReadBufferSize:     4 * 1024 * 1024,
+		WriteBufferSize:    4 * 1024 * 1024,
 		MaxRequestBodySize: 1024 * 1024,
 	}
 
 	log.Println("HTTPS Proxy server running on :443")
-	log.Fatal(httpsServer.ListenAndServeTLS(":443", "",""))
+	log.Fatal(httpsServer.ListenAndServeTLS(":443", "", ""))
 }
 
 func (p *ProxyServer) loadAllCertificates() error {
@@ -91,13 +93,11 @@ func (p *ProxyServer) getCertificate(tslHello *tls.ClientHelloInfo) (*tls.Certif
 	return nil, fmt.Errorf("no TLS cert for domain: %s", domain)
 }
 
-
-
 func (p *ProxyServer) runHTTP() {
 	handler := func(ctx *fasthttp.RequestCtx) {
 		if len(p.config) == 0 {
 			ctx.SetStatusCode(fasthttp.StatusOK)
-		    ServeProxyHomepage(ctx)
+			ServeProxyHomepage(ctx)
 			return
 		}
 
@@ -112,12 +112,12 @@ func (p *ProxyServer) runHTTP() {
 
 	log.Println("HTTP Proxy server running on :80")
 	server := &fasthttp.Server{
-		Handler:         handler,
-		ReadTimeout:     p.proxyConfig.HTTP.ReadTimeout,
-		WriteTimeout:    p.proxyConfig.HTTP.WriteTimeout,
-		IdleTimeout:     p.proxyConfig.HTTP.IdleTimeout,
-		ReadBufferSize:  4 * 1024 *1024,
-		WriteBufferSize: 4 * 1024 *1024,
+		Handler:            handler,
+		ReadTimeout:        p.proxyConfig.HTTP.ReadTimeout,
+		WriteTimeout:       p.proxyConfig.HTTP.WriteTimeout,
+		IdleTimeout:        p.proxyConfig.HTTP.IdleTimeout,
+		ReadBufferSize:     4 * 1024 * 1024,
+		WriteBufferSize:    4 * 1024 * 1024,
 		MaxRequestBodySize: 1024 * 1024,
 	}
 

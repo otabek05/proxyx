@@ -42,8 +42,14 @@ func wsHandler( w http.ResponseWriter, r *http.Request) {
 
 
 func main() {
-    http.HandleFunc("/ws", wsHandler)
+    mux := http.NewServeMux()
+    mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+        fmt.Println("Request has been arrived")
+        responseMessage := "request has been arrived successfully"
+        w.Write([]byte(responseMessage))
+    })
+    mux.HandleFunc("/ws/chat", wsHandler)
 
     log.Println("WebSocket server listening on :9000")
-    log.Fatal(http.ListenAndServe(":9000", nil))
+    log.Fatal(http.ListenAndServe(":9000", mux))
 }

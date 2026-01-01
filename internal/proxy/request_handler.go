@@ -23,7 +23,7 @@ func (p *ProxyServer) handleRequest(ctx *fasthttp.RequestCtx, servers map[string
 		return
 	}
 
-	ip := ctx.RemoteAddr().String() // get remote IP:port
+	ip := ctx.RemoteAddr().String()
     if !matched.rateLimiter.Allow(ip) {
         ctx.SetStatusCode(fasthttp.StatusTooManyRequests)
         ctx.SetBodyString("429 Too Many Requests")
@@ -37,7 +37,7 @@ func (p *ProxyServer) handleRequest(ctx *fasthttp.RequestCtx, servers map[string
 	case common.RouteStatic:
 		staticRouteHandler(ctx, matched)
 	case common.RouteWebsocket:
-		websocketProxyHandler(ctx, matched)
+		p.websocketProxyHandler(ctx)
 	default:
 		ServeProxyHomepage(ctx)
 	}

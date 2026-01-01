@@ -3,14 +3,15 @@ module ProxyX
 go 1.24.4
 
 require (
-	github.com/fasthttp/websocket v1.5.12
 	github.com/spf13/cobra v1.10.1
 	github.com/valyala/fasthttp v1.68.0
+	github.com/yeqown/fasthttp-reverse-proxy/v2 v2.2.5
 	gopkg.in/yaml.v2 v2.4.0
 )
 
 require (
 	github.com/andybalholm/brotli v1.2.0 // indirect
+	github.com/fasthttp/websocket v1.5.12 // indirect
 	github.com/klauspost/compress v1.18.1 // indirect
 	github.com/savsgio/gotils v0.0.0-20240704082632-aef3928b8a38 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect

@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	url := "ws://localhost/ws"
+	url := "ws://localhost/ws/chat"
 	conn, _, err := websocket.DefaultDialer.Dial(url, nil)
 	if err != nil {
 		fmt.Println("Dial error:", err)

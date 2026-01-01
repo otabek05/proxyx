@@ -3,7 +3,7 @@ project_name: proxyx
 release:
   github:
     owner: otabek05
-    name: proxyx
+    name: ProxyX
   name_template: '{{.Tag}}'
 builds:
   - id: proxyx
