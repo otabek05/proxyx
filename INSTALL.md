@@ -1,0 +1,72 @@
+# ProxyX Installation Guide
+
+This document explains how to install **ProxyX v0.1.0** on supported
+Linux distributions.
+
+------------------------------------------------------------------------
+
+## 📦 Linux Installation
+
+### 🐧 Debian / Ubuntu (APT-based)
+
+#### AMD64 (x86_64)
+
+``` bash
+wget https://github.com/otabek05/ProxyX/releases/download/v0.1.0/proxyx_0.1.0_linux_amd64.deb
+sudo apt install ./proxyx_0.1.0_linux_amd64.deb
+```
+
+#### ARM64
+
+``` bash
+wget https://github.com/otabek05/ProxyX/releases/download/v0.1.0/proxyx_0.1.0_linux_arm64.deb
+sudo apt install ./proxyx_0.1.0_linux_arm64.deb
+```
+
+------------------------------------------------------------------------
+
+### 🎩 RHEL / Fedora / Rocky Linux (RPM-based)
+
+#### AMD64 (x86_64)
+
+``` bash
+wget https://github.com/otabek05/ProxyX/releases/download/v0.1.0/proxyx_0.1.0_linux_amd64.rpm
+sudo dnf install ./proxyx_0.1.0_linux_amd64.rpm
+```
+
+#### ARM64
+
+``` bash
+wget https://github.com/otabek05/ProxyX/releases/download/v0.1.0/proxyx_0.1.0_linux_arm64.rpm
+sudo dnf install ./proxyx_0.1.0_linux_arm64.rpm
+```
+
+------------------------------------------------------------------------
+
+## ✅ Verify Installation
+
+``` bash
+sudo proxyx --version
+```
+
+## 🧹 Uninstall
+
+### Debian / Ubuntu
+
+``` bash
+sudo apt remove proxyx
+```
+
+### RPM-based
+
+``` bash
+sudo dnf remove proxyx
+```
+
+------------------------------------------------------------------------
+
+## ℹ️ Notes
+
+-   Root privileges are required for installation
+-   ProxyX binary is installed to `/usr/bin/proxyx`
+-   Configuration files are located in `/etc/proxyx/`
