@@ -43,16 +43,33 @@ nfpms:
 
 brews:
   - name: proxyx
-    homepage: https://github.com/otabek05/proxyx
-    description: ProxyX Reverse Proxy Service
-    license: MIT
+    ids:
+      - proxyx
+    url_template: "https://github.com/otabek05/proxyx/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
+    commit_msg_template: "Brew formula update for proxyx {{ .Tag }}"
+    directory: Formula
+    homepage: "https://github.com/otabek05/proxyx"
+    description: "ProxyX Reverse Proxy Service"
+    license: "MIT"
+    install: |
+      bin.install "proxyx"
+      (etc/"proxyx").install Dir["web/*"]
+
+    service: |
+      run [opt_bin/"proxyx"]
+      keep_alive true
+      working_dir etc/"proxyx"
+      log_path var/"log/proxyx.log"
+      error_log_path var/"log/proxyx.error.log"
+
+    test: |
+      system "#{bin}/proxyx", "--version"
 
     repository:
       owner: otabek05
       name: homebrew-proxyx
       branch: main
 
-    install: |
-      bin.install "proxyx"
-      (etc/"proxyx").install "web"
-
+    commit_author:
+      name: goreleaserbot
+      email: bot@goreleaser.com
