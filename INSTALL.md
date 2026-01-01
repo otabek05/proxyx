@@ -65,6 +65,33 @@ sudo dnf remove proxyx
 
 ------------------------------------------------------------------------
 
+## 🍏 macOS Installation
+
+```bash
+# ---- macOS Installation ----
+git clone https://github.com/otabek05/proxyx.git
+cd proxyx
+sudo make install-macos
+sudo proxyx status
+cd ..
+
+
+# ---- Manual Removal ----
+sudo launchctl stop proxyx
+sudo launchctl unload /Library/LaunchDaemons/proxyx.plist
+
+sudo rm -f /Library/LaunchDaemons/proxyx.plist
+sudo rm -f /usr/local/bin/proxyx
+sudo rm -rf /etc/proxyx
+
+# ---- Removal via Makefile ----
+cd ~/proxyx 
+sudo make uninstall-macos
+
+```
+
+------------------------------------------------------------------------
+
 ## ℹ️ Notes
 
 -   Root privileges are required for installation
