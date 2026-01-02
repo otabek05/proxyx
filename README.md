@@ -1,6 +1,6 @@
 # ProxyX
 
-ProxyX is a high‑performance, configuration‑driven reverse proxy and static file server written in **Go**, inspired by **Nginx**. It provides:
+ProxyX is a high‑performance, configuration‑driven reverse proxy and static file server written in **Go**, inspired by **Nginx**. It uses **fasthttp** for maximum performance instead of Go’s standard `net/http` and provides:
 
 * ✅ Reverse Proxy
 * ✅ Static File Serving
@@ -14,62 +14,35 @@ ProxyX is a high‑performance, configuration‑driven reverse proxy and static 
 ---
 
 
-## Installation
+## ProxyX Installation Guide
 
 ProxyX supports the following platforms:
 
 - **Linux**: Debian-based (`.deb`) and RPM-based (`.rpm`) distributions  
 - **Darwin**: macOS
 
-For detailed installation instructions, see the [Installation Guide](docs/INSTALL.md).
+For detailed installation instructions, see the [Installation Guide](doc/INSTALL.md).
 
 ---
 
 ## ProxyX Configuration Guide
 
-### ProxyX uses a Kubernetes-style YAML configuration format
-### to define domains, TLS, rate limits, and routes declaratively.
-For full command reference and usage examples, see: [docs/CLI.md](docs/CONFIGURATION.md)
+ProxyX uses a Kubernetes-style YAML configuration format to define domains, TLS, rate limits, and routes declaratively.
+For full detailed instructions and usage examples, see: [docs/CLI.md](doc/CONFIGURATION.md)
 
 ---
 
-## TLS & HTTPS with Certbot
-
-ProxyX integrates with **Certbot** to automatically issue and manage Let's Encrypt TLS certificates.
-
-### ✅ Requirements
-
-You **must install Certbot manually**:
-
-```bash
-sudo dnf install certbot   # RHEL / Amazon Linux
-sudo apt install certbot   # Ubuntu / Debian
-```
-
----
-
-### ✅ Interactive Certificate Issuance
-
-```bash
-sudo proxyx certs
-```
-
-ProxyX will **prompt interactively**:
-
-* ✅ Domain name
-* ✅ Email address for Let's Encrypt
-
-Then ProxyX will:
-
-* Request the certificate
-* Store the cert & key
-* Automatically wire it into your configuration
-
----
-## CLI Tool
+## ProxyX CLI Tool
 
 ProxyX includes a full lifecycle management CLI.  
-For full command reference and usage examples, see: [docs/CLI.md](docs/CLI.md)
+For full command reference and usage examples, see: [doc/CLI.md](doc/CLI.md)
+
+---
+
+## ProxyX TLS Configuration Guide
+
+ProxyX integrates with **Certbot** to automatically issue and manage Let's Encrypt TLS certificates.
+For detailed instructions, see: [docs/TLS.md] (doc/TLC.md)
 
 ---
 

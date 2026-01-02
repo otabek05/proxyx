@@ -93,7 +93,6 @@ sudo make uninstall-macos
 ------------------------------------------------------------------------
 
 ## ℹ️ Notes
-
 -   Root privileges are required for installation
 -   ProxyX binary is installed to `/usr/bin/proxyx`
 -   Configuration files are located in `/etc/proxyx/`

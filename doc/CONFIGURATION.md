@@ -61,7 +61,6 @@ metadata:
 * **name** uniquely identifies the configuration within the system.
 * **namespace** allows grouping multiple configurations logically.
 
-### Usage
 
 ### Used by CLI commands:
 
