@@ -13,138 +13,23 @@ ProxyX is a high‑performance, configuration‑driven reverse proxy and static 
 
 ---
 
-## Features Overview
 
-### Reverse Proxy
+## Installation
 
-Route traffic to one or more backend servers with automatic load balancing and health checks.
+ProxyX supports the following platforms:
 
-### Static File Hosting
+- **Linux**: Debian-based (`.deb`) and RPM-based (`.rpm`) distributions  
+- **Darwin**: macOS
 
-Serve static files directly from any directory on your system.
-
-### TLS / HTTPS (Certbot)
-
-Automatically secure domains using Let's Encrypt via **Certbot**.
-
-### Load Balancing
-
-* **Round‑Robin** distribution
-* **Health Checking** for backend servers
-* Automatic failover
-
-### Per‑Domain Rate Limiting
-
-Each domain has its **own independent rate limit**.
-
-### YAML Configuration
-
-Kubernetes‑style declarative configuration format.
+For detailed installation instructions, see the [Installation Guide](docs/INSTALL.md).
 
 ---
 
-## Example ProxyX Configuration
+## ProxyX Configuration Guide
 
-```yaml
-apiVersion: proxyx.io/v1
-kind: ProxyConfig
-
-metadata:
-  name: local-proxy
-  namespace: default
-
-spec:
-  domain: localhost
-
-  tls:
-    certFile: /path/to/certs/server.crt
-    keyFile:  /path/to/certs/server.key
-
-  rateLimit:
-    requests: 1000
-    windowSeconds: 2
-
-  routes:
-    - name: api-route
-      path: /api/v1/**
-      type: ReverseProxy
-      reverseProxy:
-        servers:
-          - url: http://127.0.0.1:8080
-          - url: http://127.0.0.1:8081
-
-    - name: static-files
-      path: /**
-      type: Static
-      static:
-        root: /path/to/static/file
-
-    - name: websocket-route
-      path: /ws/**    
-      type: Websocket
-      websocket:
-        url: ws://127.0.0.1:9000/ws
-```
-
----
-
-## Route Types
-
-### ✅ Static Route
-
-```yaml
-type: Static
-static:
-  root: /var/www/app
-```
-
-* Direct disk file serving
-* Supports recursive path matching using `/**`
-
----
-
-### ✅ Reverse Proxy Route
-
-```yaml
-type: ReverseProxy
-reverseProxy:
-  servers:
-    - url: http://localhost:8080
-    - url: http://localhost:8081
-```
-
-* Multiple backends supported
-* Round‑Robin load balancing
-* Automatic health‑based failover
-
----
-
-## Load Balancer
-
-### ✅ Round‑Robin
-
-Distributes requests evenly across all **healthy** backends.
-
-### ✅ Health Checker
-
-* Removes offline servers automatically
-* Periodic TCP/HTTP availability probing
-
----
-
-## 🚦 Per‑Domain Rate Limiter
-
-Each domain controls its **own request limits**:
-
-```yaml
-rateLimit:
-  requests: 1000
-  windowSeconds: 2
-```
-
-* Protects domains independently
-* Prevents cross‑domain poisoning
-* Applied across **all routes under the domain**
+### ProxyX uses a Kubernetes-style YAML configuration format
+### to define domains, TLS, rate limits, and routes declaratively.
+For full command reference and usage examples, see: [docs/CLI.md](docs/CONFIGURATION.md)
 
 ---
 
@@ -181,59 +66,10 @@ Then ProxyX will:
 * Automatically wire it into your configuration
 
 ---
-
 ## CLI Tool
 
-ProxyX includes a full lifecycle management CLI.
-
-### ✅ Available Commands
-
-| Command                | Description                                                     |
-| ---------------------- | --------------------------------------------------------------- |
-| `apply`                | Apply configuration file                                        |
-| `certs`                | **Interactive TLS issuance via Certbot**                        |
-| `configs`              | Show active configurations                                      |
-| `configs -o wide`      | Show full detailed configuration                                |
-| `delete`               | Delete applied configuration (default behavior)                |
-| `delete [name]`        | Delete configuration by its **name**                            |
-| `restart`              | Reload ProxyX configuration                                     |
-| `status`               | Check if ProxyX is running                                      |
-| `stop`                 | Stop ProxyX service                                             |
-| `version`              | Show ProxyX version                                             |
-| `healthcheck`          | Configure health check endpoint (enable/disable/set path/interval) |
-
-
----
-
-### ✅ Basic CLI Usage
-
-```bash
-sudo proxyx apply -f path/to/file
-sudo proxyx configs
-sudo proxyx configs -o wide
-sudo proxyx restart
-sudo proxyx status
-```
-
----
-
-## Wide Configuration View Example
-
-```bash
-sudo proxyx configs -o wide
-```
-
-```
-┌──────────────┬─────────────┬───────────┬───────────┬────────────┬──────────────┬───────────────────────┬───────────────┬─────────────────────────┐
-│     FILE     │    NAME     │ NAMESPACE │  DOMAIN   │    PATH    │     TYPE     │        TARGET         │   RATELIMIT   │            TLS          │
-├──────────────┼─────────────┼───────────┼───────────┼────────────┼──────────────┼───────────────────────┼───────────────┼─────────────────────────|
-│ example.yaml │ local-proxy │ default   │ localhost │ /**        │ Static       │     path/to/file/     │ 1000 req /5s  │ path/to/cert/server.crt │
-│              │             │           │           │            │              │                       │               │ path/to/cert/server.key │
-│              │             │           │           ├────────────┼──────────────┼───────────────────────┼───────────────┼─────────────────────────┤
-│              │             │           │           │ /api/v1/** │ ReverseProxy │ http://localhost:8080 │ 1000 req / 5s │ path/to/cert/server.crt │
-│              │             │           │           │            │              │ http://localhost:8081 │               │ path/to/cert/server.key │
-└──────────────┴─────────────┴───────────┴───────────┴────────────┴──────────────┴───────────────────────┴───────────────┴─────────────────────────┘
-```
+ProxyX includes a full lifecycle management CLI.  
+For full command reference and usage examples, see: [docs/CLI.md](docs/CLI.md)
 
 ---
 
@@ -278,12 +114,6 @@ ProxyX automatically installs itself as a **Linux system service (`proxyx.servic
 * Internal microservice router
 * Development reverse proxy
 * Production HTTPS entrypoint
----
-
-## Installation
-
-For detailed installation instructions, see the [Installation Guide](INSTALL.md).
-
 ---
 
 ## Security Features
