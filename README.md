@@ -1,6 +1,6 @@
 # ProxyX
 
-ProxyX is a high‑performance, configuration‑driven reverse proxy and static file server written in **Go**, inspired by **Nginx**. It uses **fasthttp** for maximum performance instead of Go’s standard `net/http` and provides:
+ProxyX is a high‑performance, configuration‑driven reverse proxy and static file server written in **Go**, inspired by **Nginx**. It uses `fasthttp` for maximum performance instead of Go’s standard `net/http` and provides:
 
 * ✅ Reverse Proxy
 * ✅ Static File Serving
@@ -28,21 +28,21 @@ For detailed installation instructions, see the [Installation Guide](doc/INSTALL
 ## ProxyX Configuration Guide
 
 ProxyX uses a Kubernetes-style YAML configuration format to define domains, TLS, rate limits, and routes declaratively.
-For full detailed instructions and usage examples, see: [docs/CLI.md](doc/CONFIGURATION.md)
+For full detailed instructions and usage examples, see: [Configuration Guide](doc/CONFIGURATION.md)
 
 ---
 
 ## ProxyX CLI Tool
 
 ProxyX includes a full lifecycle management CLI.  
-For full command reference and usage examples, see: [doc/CLI.md](doc/CLI.md)
+For full command reference and usage examples, see: [CLI Tool Guide](doc/CLI.md)
 
 ---
 
 ## ProxyX TLS Configuration Guide
 
 ProxyX integrates with **Certbot** to automatically issue and manage Let's Encrypt TLS certificates.
-For detailed instructions, see: [docs/TLS.md] (doc/TLC.md)
+For detailed instructions, see: [TLS Configuration Guide](doc/TLS.md)
 
 ---
 
